@@ -1,38 +1,23 @@
 import { useState, useEffect } from 'react';
-import { useGetCallerSettings, useSaveCallerSettings } from '../hooks/useSettings';
 import { useGetCallerUserProfile, useSaveCallerUserProfile } from '../hooks/useProfiles';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
 import { Loader2, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
-  const { data: settings, isLoading: settingsLoading, isFetched: settingsFetched } = useGetCallerSettings();
   const { data: profile, isLoading: profileLoading } = useGetCallerUserProfile();
-  const { mutate: saveSettings, isPending: isSavingSettings } = useSaveCallerSettings();
   const { mutate: saveProfile, isPending: isSavingProfile } = useSaveCallerUserProfile();
 
   const [displayName, setDisplayName] = useState('');
-  const [privacyPostsVisibleToFriendsOnly, setPrivacyPostsVisibleToFriendsOnly] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.displayName);
     }
   }, [profile]);
-
-  useEffect(() => {
-    if (settings) {
-      setPrivacyPostsVisibleToFriendsOnly(settings.privacyPostsVisibleToFriendsOnly);
-    } else if (settingsFetched && !settings) {
-      // No settings exist yet, use defaults
-      setPrivacyPostsVisibleToFriendsOnly(false);
-    }
-  }, [settings, settingsFetched]);
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,23 +39,7 @@ export default function SettingsPage() {
     );
   };
 
-  const handleSavePrivacy = () => {
-    const newSettings = {
-      displayName: displayName.trim(),
-      privacyPostsVisibleToFriendsOnly,
-    };
-
-    saveSettings(newSettings, {
-      onSuccess: () => {
-        toast.success('Privacy settings updated');
-      },
-      onError: (error: any) => {
-        toast.error(error.message || 'Failed to update privacy settings');
-      },
-    });
-  };
-
-  if (settingsLoading || profileLoading) {
+  if (profileLoading) {
     return (
       <div className="flex justify-center py-16">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -114,42 +83,6 @@ export default function SettingsPage() {
               )}
             </Button>
           </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Privacy Settings</CardTitle>
-          <CardDescription>Control who can see your content</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="privacy-posts">Posts Visible to Friends Only</Label>
-              <p className="text-sm text-muted-foreground">
-                When enabled, only your friends can view your posts
-              </p>
-            </div>
-            <Switch
-              id="privacy-posts"
-              checked={privacyPostsVisibleToFriendsOnly}
-              onCheckedChange={setPrivacyPostsVisibleToFriendsOnly}
-              disabled={isSavingSettings}
-            />
-          </div>
-
-          <Separator />
-
-          <Button onClick={handleSavePrivacy} disabled={isSavingSettings}>
-            {isSavingSettings ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Saving...
-              </>
-            ) : (
-              'Save Privacy Settings'
-            )}
-          </Button>
         </CardContent>
       </Card>
     </div>

@@ -4,13 +4,21 @@ import { UserDirectoryProfile } from '../backend';
 
 export function useSearchUserProfiles(searchText: string) {
   const { actor, isFetching: actorFetching } = useActor();
+  const trimmedSearchText = searchText.trim();
 
-  return useQuery<UserDirectoryProfile[]>({
-    queryKey: ['userSearch', searchText],
+  const query = useQuery<UserDirectoryProfile[]>({
+    queryKey: ['userSearch', trimmedSearchText],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.searchUserProfiles(searchText);
+      if (!actor) return [];
+      return actor.searchUserProfiles(trimmedSearchText);
     },
     enabled: !!actor && !actorFetching,
+    retry: false,
   });
+
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
 }

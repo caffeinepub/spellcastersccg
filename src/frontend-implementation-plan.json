@@ -1,24 +1,6 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove “Find People” from authenticated header navigation",
-  "requirements": [
-    {
-      "id": "REQ-30",
-      "summary": "Remove the \"Find People\" navigation item from the authenticated desktop header button group and mobile slide-out menu, without affecting the /directory route.",
-      "acceptanceCriteria": [
-        "When signed in on desktop widths, the top header navigation no longer shows a button labeled \"Find People\".",
-        "When signed in on mobile widths, the slide-out menu no longer shows an item labeled \"Find People\".",
-        "No other navigation items (Feed, My Profile, Requests, Notifications, Settings) are removed or renamed.",
-        "All user-facing text remains in English."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AppHeader.tsx",
-          "operation": "modify",
-          "description": "Remove the desktop and mobile navigation UI entries that link to the directory and are labeled \"Find People\". Also remove any now-unused related icon imports (e.g., Users from lucide-react) to keep the header component clean, while leaving all other nav items unchanged and keeping the /directory route intact."
-        }
-      ]
-    }
-  ]
+  "title": "Deploy current draft version live",
+  "requirements": []
 }

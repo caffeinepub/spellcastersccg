@@ -7,6 +7,7 @@ import { ChevronRight, Loader2 } from 'lucide-react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { Principal } from '@dfinity/principal';
 import { useIsFollowing, useFollowUser, useUnfollowUser } from '../hooks/useFollow';
+import { useDiscoverSignals } from '../hooks/useDiscoverSignals';
 
 interface UserCardProps {
   profile: UserDirectoryProfile;
@@ -15,22 +16,46 @@ interface UserCardProps {
 export default function UserCard({ profile }: UserCardProps) {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
+  const { recordProfileView } = useDiscoverSignals();
   
-  const userPrincipal = Principal.fromText(profile.id);
+  // Safely parse principal with error handling
+  let userPrincipal: Principal | undefined;
+  let isValidPrincipal = false;
+  try {
+    userPrincipal = Principal.fromText(profile.id);
+    isValidPrincipal = true;
+  } catch (error) {
+    console.error('[UserCard] Invalid principal ID:', profile.id, error);
+  }
+
   const isOwnProfile = identity?.getPrincipal().toString() === profile.id;
   
   const { data: isFollowing, isLoading: isFollowingLoading } = useIsFollowing(
-    isOwnProfile ? undefined : userPrincipal
+    isOwnProfile || !isValidPrincipal ? undefined : userPrincipal
   );
   const followMutation = useFollowUser();
   const unfollowMutation = useUnfollowUser();
 
   const handleCardClick = () => {
+    if (!isValidPrincipal) {
+      console.error('[UserCard] Cannot navigate to invalid profile:', profile.id);
+      return;
+    }
+    
+    // Record profile view signal (fire-and-forget)
+    recordProfileView(profile.id);
+    
     navigate({ to: '/user/$userId', params: { userId: profile.id } });
   };
 
   const handleFollowClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    if (!isValidPrincipal || !userPrincipal) {
+      console.error('[UserCard] Cannot follow invalid profile:', profile.id);
+      return;
+    }
+
     if (isFollowing) {
       unfollowMutation.mutate(userPrincipal);
     } else {
@@ -41,7 +66,11 @@ export default function UserCard({ profile }: UserCardProps) {
   const isActionLoading = followMutation.isPending || unfollowMutation.isPending;
 
   return (
-    <Card className="hover:bg-accent/50 transition-colors cursor-pointer" onClick={handleCardClick}>
+    <Card 
+      className="hover:bg-accent/50 transition-colors cursor-pointer" 
+      onClick={handleCardClick}
+      style={{ opacity: isValidPrincipal ? 1 : 0.5 }}
+    >
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
@@ -57,10 +86,13 @@ export default function UserCard({ profile }: UserCardProps) {
             {profile.bio && (
               <p className="text-sm text-muted-foreground truncate">{profile.bio}</p>
             )}
+            {!isValidPrincipal && (
+              <p className="text-xs text-destructive">Invalid profile</p>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
-            {!isOwnProfile && (
+            {!isOwnProfile && isValidPrincipal && (
               <Button
                 variant={isFollowing ? 'outline' : 'default'}
                 size="sm"
@@ -76,7 +108,7 @@ export default function UserCard({ profile }: UserCardProps) {
                 )}
               </Button>
             )}
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" disabled={!isValidPrincipal}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

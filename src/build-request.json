@@ -1,35 +1,18 @@
 {
   "kind": "build_request",
-  "title": "Remove “Find People” from the app header navigation",
+  "title": "Deploy current draft version live",
   "priority": "normal",
-  "requirements": [
-    {
-      "id": "REQ-30",
-      "text": "Remove the navigation item labeled \"Find People\" from the authenticated app header navigation (both the desktop header button group and the mobile slide-out menu), so it no longer appears in the tab/navigation bar UI.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-1"
-        ],
-        "quotes": [
-          "remove this section that says find people from the tab bar"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When signed in on desktop widths, the top header navigation no longer shows a button labeled \"Find People\".",
-        "When signed in on mobile widths, the slide-out menu no longer shows an item labeled \"Find People\".",
-        "No other navigation items (Feed, My Profile, Requests, Notifications, Settings) are removed or renamed.",
-        "All user-facing text remains in English."
-      ]
-    }
-  ],
+  "requirements": [],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui (shadcn components are read-only).",
-    "Keep all user-facing text in English."
+    "Deployment-only: do not change application functionality or UI as part of publishing (per frontend/DEPLOYMENT.md).",
+    "Respect existing single-actor Motoko backend architecture; do not introduce additional backend services.",
+    "Do not modify files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Do not change the User Directory page layout, tabs, search behavior, or follow/unfollow functionality.",
-    "Do not remove or change the /directory route itself—only remove the \"Find People\" navigation entry from the header navigation UI."
+    "Adding new features or screens.",
+    "Refactoring backend data models or storage.",
+    "Changing styling/theme, copy, or UX flows.",
+    "Introducing new CI/CD tooling or external infrastructure."
   ],
   "imageRequirements": {
     "required": [],

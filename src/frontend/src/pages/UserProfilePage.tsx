@@ -6,8 +6,7 @@ import { useGetFriendshipStatus } from '../hooks/useFriends';
 import { useGetFollowStats } from '../hooks/useFollowStats';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { formatJoinedDate } from '../utils/formatDate';
-import FriendActions from '../components/FriendActions';
-import FriendsList from '../components/FriendsList';
+import ProfileFollowButton from '../components/ProfileFollowButton';
 import PostList from '../components/PostList';
 import ProfileImages from '../components/ProfileImages';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -111,17 +110,8 @@ export default function UserProfilePage() {
                 )}
               </div>
             </div>
-            {userPrincipal && <FriendActions targetUser={userPrincipal} />}
+            {userPrincipal && <ProfileFollowButton targetUser={userPrincipal} />}
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Friends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {userPrincipal && <FriendsList user={userPrincipal} />}
         </CardContent>
       </Card>
 

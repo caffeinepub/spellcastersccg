@@ -6,7 +6,7 @@ import LoginButton from './LoginButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Home, Bell, User, Settings, Menu } from 'lucide-react';
+import { Home, Bell, User, Settings, Menu, Search } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AppHeader() {
@@ -47,11 +47,11 @@ export default function AppHeader() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/requests' })}
+                onClick={() => navigate({ to: '/directory' })}
                 className="gap-2"
               >
-                <Bell className="h-4 w-4" />
-                Requests
+                <Search className="h-4 w-4" />
+                Discover
               </Button>
               <Button
                 variant="ghost"
@@ -106,19 +106,19 @@ export default function AppHeader() {
                   </Button>
                   <Button
                     variant="ghost"
+                    onClick={() => handleNavigation('/directory')}
+                    className="justify-start gap-2"
+                  >
+                    <Search className="h-4 w-4" />
+                    Discover
+                  </Button>
+                  <Button
+                    variant="ghost"
                     onClick={() => handleNavigation('/profile')}
                     className="justify-start gap-2"
                   >
                     <User className="h-4 w-4" />
                     My Profile
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleNavigation('/requests')}
-                    className="justify-start gap-2"
-                  >
-                    <Bell className="h-4 w-4" />
-                    Requests
                   </Button>
                   <Button
                     variant="ghost"

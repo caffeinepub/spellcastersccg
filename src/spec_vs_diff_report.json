@@ -1,23 +1,28 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T05:24:33.377Z",
-  "summary": "The diff updates the authenticated desktop header navigation in AppHeader.tsx to show Feed, Requests, Notifications, Settings, and My Profile, with no visible \"Find People\" item. However, the mobile slide-out menu section is truncated in the diff, so removal of \"Find People\" from the mobile menu cannot be verified from the provided evidence.",
-  "missing_requirements": [
+  "generatedAt": "2026-02-12T19:26:38.873Z",
+  "summary": "BuildRequest asked for deployment-only go-live with no functionality/UI changes. The diff shows modifications to the Motoko backend file that appear to introduce/contain application feature logic (e.g., follow system, posts/comments/reactions/notifications maps and types), and a change to project_state.json tracking a new feature request, which were not requested as part of a deployment-only publish.",
+  "missing_requirements": [],
+  "hallucinated_features": [
     {
-      "id": "REQ-30",
-      "requirement": "Remove the navigation item labeled \"Find People\" from the authenticated app header navigation on mobile widths (slide-out menu), so it no longer appears in the mobile menu UI.",
-      "reason": "The mobile navigation portion of AppHeader.tsx is truncated, so there is no conclusive evidence that a \"Find People\" item was removed from the mobile slide-out menu.",
+      "description": "Backend social features and related data structures (e.g., follow system, friend requests, posts/comments/reactions/notifications types and persistent maps) present in backend/main.mo.",
+      "reason": "BuildRequest constraints specify deployment-only with no application functionality changes; adding or modifying such feature logic is out of scope for publishing.",
       "evidence": [
-        "frontend/src/components/AppHeader.tsx (mobile navigation section is truncated after the first mobile Button)"
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Project tracking/state update recording a new feature request entry for the go-live release (project_state.json new_feature_requests).",
+      "reason": "BuildRequest did not request changes to project state metadata; it requested deployment-only and explicitly listed 'Requirements: none'.",
+      "evidence": [
+        "project_state.json"
       ]
     }
   ],
-  "hallucinated_features": [],
   "confidence": 0.62,
   "changed_files": [
-    "frontend-file-summaries.txt",
-    "frontend/src/components/AppHeader.tsx",
+    "backend/main.mo",
     "project_state.json"
   ]
 }

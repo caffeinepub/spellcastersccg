@@ -2,8 +2,7 @@ import { useGetIncomingRequests, useGetOutgoingRequests } from '../hooks/useFrie
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FriendRequestCard from '../components/FriendRequestCard';
-import { Loader2, Info } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2 } from 'lucide-react';
 
 export default function FriendRequestsPage() {
   const { data: incomingRequests, isLoading: incomingLoading } = useGetIncomingRequests();
@@ -13,19 +12,12 @@ export default function FriendRequestsPage() {
     <div className="max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Friend Requests</CardTitle>
+          <CardTitle className="text-2xl">Follower Request</CardTitle>
           <CardDescription>
-            Manage your incoming and outgoing friend requests
+            Manage your incoming and outgoing follower requests
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Alert className="mb-6">
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              Friend request tracking is currently limited. You can send and accept requests from user profiles.
-            </AlertDescription>
-          </Alert>
-
           <Tabs defaultValue="incoming">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="incoming">

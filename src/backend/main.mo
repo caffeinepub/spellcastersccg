@@ -3,20 +3,17 @@ import Set "mo:core/Set";
 import Map "mo:core/Map";
 import List "mo:core/List";
 import Text "mo:core/Text";
-import Order "mo:core/Order";
 import Time "mo:core/Time";
+import Order "mo:core/Order";
 import Option "mo:core/Option";
 import Principal "mo:core/Principal";
-import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
 import Storage "blob-storage/Storage";
 
+import Runtime "mo:core/Runtime";
 
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
-
-// Apply migration logic on upgrade
 
 actor {
   public type Media = {
@@ -137,10 +134,11 @@ actor {
   let notificationsMap = Map.empty<Principal, List.List<Notification>>();
   let allPostsMap = Map.empty<Text, Post>();
 
-  include MixinStorage();
-
+  // Authentication system
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+
+  include MixinStorage();
 
   func generateId() : Text {
     Time.now().toText();
@@ -212,11 +210,14 @@ actor {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only authenticated users can search profiles");
     };
+
     let filteredUsers = List.empty<UserDirectoryProfile>();
-    for ((principal, profile) in userProfiles.entries()) {
-      if (profile.displayName.contains(#text searchText)) {
+
+    if (searchText.trim(#text " ") == "") {
+      // Return all users if search text is empty
+      for ((principal, profile) in userProfiles.entries()) {
         let directoryProfile : UserDirectoryProfile = {
-          id = profile.id;
+          id = principal.toText();
           displayName = profile.displayName;
           bio = profile.bio;
           avatarBlob = profile.avatarBlob;
@@ -224,6 +225,22 @@ actor {
           joinedDate = profile.joinedDate;
         };
         filteredUsers.add(directoryProfile);
+      };
+    } else {
+      let searchTerm = searchText.trim(#text " ").toLower();
+      for ((principal, profile) in userProfiles.entries()) {
+        let displayName = profile.displayName.trim(#text " ").toLower();
+        if (displayName.contains(#text searchTerm)) {
+          let directoryProfile : UserDirectoryProfile = {
+            id = principal.toText();
+            displayName = profile.displayName;
+            bio = profile.bio;
+            avatarBlob = profile.avatarBlob;
+            coverPhotoBlob = profile.coverPhotoBlob;
+            joinedDate = profile.joinedDate;
+          };
+          filteredUsers.add(directoryProfile);
+        };
       };
     };
     filteredUsers.toArray();
@@ -243,7 +260,16 @@ actor {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can save their profile. Anonymous principal is not a user. Please sign in.");
     };
-    userProfiles.add(caller, profile);
+
+    let userProfile : UserProfile = {
+      id = caller.toText();
+      displayName = profile.displayName;
+      bio = profile.bio;
+      avatarBlob = profile.avatarBlob;
+      coverPhotoBlob = profile.coverPhotoBlob;
+      joinedDate = profile.joinedDate;
+    };
+    userProfiles.add(caller, userProfile);
   };
 
   // --- Settings Management ---
@@ -970,3 +996,4 @@ actor {
     };
   };
 };
+

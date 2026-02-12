@@ -1,34 +1,21 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T05:24:33.380Z",
+  "generatedAt": "2026-02-12T19:26:38.875Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
-    "items": [
-      {
-        "id": "REQ-30",
-        "summary": "Remove the navigation item labeled \"Find People\" from the authenticated app header navigation (both the desktop header button group and the mobile slide-out menu), so it no longer appears in the tab/navigation bar UI.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AppHeader.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AppHeader.tsx"
-        ]
-      }
-    ]
+    "total": 0,
+    "implemented": 0,
+    "items": []
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
-    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/AppHeader.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

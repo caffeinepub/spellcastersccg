@@ -1,11 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Remove the “Find People” item from the authenticated app header navigation UI on both desktop and mobile.
+**Goal:** Deploy the current draft version live without changing functionality or UI.
 
 **Planned changes:**
-- Remove the “Find People” entry from the signed-in desktop header button group.
-- Remove the “Find People” entry from the signed-in mobile slide-out navigation menu.
-- Keep all other navigation items (Feed, My Profile, Requests, Notifications, Settings) unchanged and in English.
+- Publish the existing frontend and Motoko single-actor backend per frontend/DEPLOYMENT.md.
+- Apply deployment configuration/steps only, without modifying app behavior, screens, styling, copy, or UX flows.
 
-**User-visible outcome:** Signed-in users will no longer see “Find People” in the app’s header navigation on desktop or in the mobile slide-out menu, while all other navigation items remain available.
+**User-visible outcome:** The current draft build is accessible live in its current form, with no functional or UI changes.

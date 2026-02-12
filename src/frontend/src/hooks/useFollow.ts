@@ -8,7 +8,7 @@ export function useIsFollowing(target: Principal | undefined) {
   return useQuery<boolean>({
     queryKey: ['isFollowing', target?.toString()],
     queryFn: async () => {
-      if (!actor || !target) throw new Error('Actor or target not available');
+      if (!actor || !target) return false;
       return actor.isFollowing(target);
     },
     enabled: !!actor && !actorFetching && !!target,
@@ -23,15 +23,12 @@ export function useFollowUser() {
   return useMutation({
     mutationFn: async (target: Principal) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.followUser(target);
+      return actor.followUser(target);
     },
     onSuccess: (_, target) => {
-      // Invalidate follow state for this target
       queryClient.invalidateQueries({ queryKey: ['isFollowing', target.toString()] });
-      // Invalidate follow stats for the target user
-      queryClient.invalidateQueries({ queryKey: ['followStats', target.toString()] });
-      // Invalidate follow stats for all users (in case we're showing our own stats)
       queryClient.invalidateQueries({ queryKey: ['followStats'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
     },
   });
 }
@@ -43,15 +40,55 @@ export function useUnfollowUser() {
   return useMutation({
     mutationFn: async (target: Principal) => {
       if (!actor) throw new Error('Actor not available');
-      await actor.unfollowUser(target);
+      return actor.unfollowUser(target);
     },
     onSuccess: (_, target) => {
-      // Invalidate follow state for this target
       queryClient.invalidateQueries({ queryKey: ['isFollowing', target.toString()] });
-      // Invalidate follow stats for the target user
-      queryClient.invalidateQueries({ queryKey: ['followStats', target.toString()] });
-      // Invalidate follow stats for all users (in case we're showing our own stats)
       queryClient.invalidateQueries({ queryKey: ['followStats'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
     },
   });
+}
+
+export function useGetFollowing() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  const query = useQuery<Principal[]>({
+    queryKey: ['following'],
+    queryFn: async () => {
+      if (!actor) return [];
+      
+      try {
+        const identity = await actor.getCallerUserProfile();
+        if (!identity) return [];
+        
+        // Get all profiles and filter by those we're following
+        const allProfiles = await actor.searchUserProfiles('');
+        const followingChecks = await Promise.all(
+          allProfiles.map(async (profile) => {
+            try {
+              const principal = Principal.fromText(profile.id);
+              const isFollowing = await actor.isFollowing(principal);
+              return { principal, isFollowing };
+            } catch {
+              return { principal: null, isFollowing: false };
+            }
+          })
+        );
+        
+        return followingChecks
+          .filter(check => check.isFollowing && check.principal)
+          .map(check => check.principal!);
+      } catch {
+        return [];
+      }
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
+
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+  };
 }
