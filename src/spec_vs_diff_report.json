@@ -1,0 +1,49 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-12T01:28:46.527Z",
+  "summary": "BuildRequest lists no explicit requirements or acceptance criteria. The diff modifies backend/main.mo to add/expand social-network features (profiles with avatar/cover/bio plus friend requests, posts, authorization/storage mixins) and updates project_state.json to enumerate multiple features/REQ IDs that are not present in the BuildRequest.",
+  "missing_requirements": [],
+  "hallucinated_features": [
+    {
+      "description": "Friend request system (send/track incoming/outgoing requests, friendships map, related types like FriendRequest).",
+      "reason": "Not requested (BuildRequest has no requirements; title focuses only on customizable profile fields).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Posts/timeline/feed-related data structures and logic (Post type, postsMap, timestamp sorting helper).",
+      "reason": "Not requested (BuildRequest contains no requirements; non-goals focus on not adding extra profile fields and not adding 3rd-party auth).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Authorization enforcement using AccessControl/MixinAuthorization and permission checks (#user) around profile access.",
+      "reason": "Not requested in the BuildRequest (no requirements mention authorization changes).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Blob storage integration via Storage/MixinStorage and profile media fields using Storage.ExternalBlob.",
+      "reason": "Not explicitly requested (BuildRequest does not specify storage mechanism; only mentions avatar/cover/bio at a high level).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Project state update enumerating multiple features with REQ-1..REQ-9 (Internet Identity sign-in, profile editing, directory/search, friend workflow, timeline, home feed, visual theme, placeholder assets, header branding).",
+      "reason": "BuildRequest explicitly states Requirements: none; adding many REQ-linked features in project_state.json is not grounded in the request.",
+      "evidence": [
+        "project_state.json"
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "changed_files": [
+    "backend/main.mo",
+    "project_state.json"
+  ]
+}
