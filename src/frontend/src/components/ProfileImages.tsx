@@ -36,11 +36,26 @@ export default function ProfileImages({ coverUrl, avatarUrl, displayName, size =
           src={coverUrl || defaultCover}
           alt="Cover"
           className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== defaultCover) {
+              target.src = defaultCover;
+            }
+          }}
         />
       </div>
       <div className={`absolute ${avatarPositions[size]} left-6`}>
         <Avatar className={`${avatarSizes[size]} border-4 border-background`}>
-          <AvatarImage src={avatarUrl || defaultAvatar} alt={displayName} />
+          <AvatarImage 
+            src={avatarUrl || defaultAvatar} 
+            alt={displayName}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== defaultAvatar) {
+                target.src = defaultAvatar;
+              }
+            }}
+          />
           <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
       </div>

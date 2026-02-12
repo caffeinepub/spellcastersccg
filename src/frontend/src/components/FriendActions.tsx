@@ -9,6 +9,7 @@ import {
 } from '../hooks/useFriends';
 import { Button } from '@/components/ui/button';
 import { Loader2, UserPlus, UserMinus, UserCheck, X, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface FriendActionsProps {
   targetUser: Principal;
@@ -33,6 +34,15 @@ export default function FriendActions({ targetUser }: FriendActionsProps) {
 
   const isPending = isSending || isCanceling || isAccepting || isDeclining;
 
+  const handleError = (error: any) => {
+    const message = error.message || 'An error occurred';
+    if (message.includes('privacy') || message.includes('blocked')) {
+      toast.error('This action is blocked by the user\'s privacy settings');
+    } else {
+      toast.error(message);
+    }
+  };
+
   if (status?.isFriend) {
     return (
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -47,7 +57,7 @@ export default function FriendActions({ targetUser }: FriendActionsProps) {
       <div className="flex gap-2">
         <Button
           size="sm"
-          onClick={() => acceptRequest(targetUser)}
+          onClick={() => acceptRequest(targetUser, { onError: handleError })}
           disabled={isPending}
           className="gap-2"
         >
@@ -57,7 +67,7 @@ export default function FriendActions({ targetUser }: FriendActionsProps) {
         <Button
           size="sm"
           variant="outline"
-          onClick={() => declineRequest(targetUser)}
+          onClick={() => declineRequest(targetUser, { onError: handleError })}
           disabled={isPending}
           className="gap-2"
         >
@@ -73,7 +83,7 @@ export default function FriendActions({ targetUser }: FriendActionsProps) {
       <Button
         size="sm"
         variant="outline"
-        onClick={() => cancelRequest(targetUser)}
+        onClick={() => cancelRequest(targetUser, { onError: handleError })}
         disabled={isPending}
         className="gap-2"
       >
@@ -86,7 +96,7 @@ export default function FriendActions({ targetUser }: FriendActionsProps) {
   return (
     <Button
       size="sm"
-      onClick={() => sendRequest(targetUser)}
+      onClick={() => sendRequest(targetUser, { onError: handleError })}
       disabled={isPending}
       className="gap-2"
     >

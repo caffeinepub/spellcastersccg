@@ -6,6 +6,8 @@ import MyProfilePage from './pages/MyProfilePage';
 import UserProfilePage from './pages/UserProfilePage';
 import UserDirectoryPage from './pages/UserDirectoryPage';
 import FriendRequestsPage from './pages/FriendRequestsPage';
+import NotificationsPage from './pages/NotificationsPage';
+import SettingsPage from './pages/SettingsPage';
 import LandingPage from './pages/LandingPage';
 
 const rootRoute = createRootRoute({
@@ -76,6 +78,26 @@ const requestsRoute = createRoute({
   ),
 });
 
+const notificationsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/notifications',
+  component: () => (
+    <AuthGate>
+      <NotificationsPage />
+    </AuthGate>
+  ),
+});
+
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/settings',
+  component: () => (
+    <AuthGate>
+      <SettingsPage />
+    </AuthGate>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   feedRoute,
@@ -83,6 +105,8 @@ const routeTree = rootRoute.addChildren([
   userProfileRoute,
   directoryRoute,
   requestsRoute,
+  notificationsRoute,
+  settingsRoute,
 ]);
 
 const router = createRouter({ routeTree });

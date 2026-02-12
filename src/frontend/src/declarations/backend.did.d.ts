@@ -10,25 +10,63 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface Comment {
+  'id' : string,
+  'content' : string,
+  'author' : Principal,
+  'timestamp' : Time,
+  'postAuthor' : Principal,
+  'postId' : string,
+}
 export type ExternalBlob = Uint8Array;
+export interface FollowStats { 'followers' : bigint, 'following' : bigint }
+export interface Notification {
+  'id' : string,
+  'notificationType' : {
+      'comment' : { 'commentAuthor' : Principal, 'postId' : string }
+    } |
+    { 'friendRequest' : { 'from' : Principal } },
+  'recipient' : Principal,
+  'isRead' : boolean,
+  'timestamp' : Time,
+}
 export interface Post {
   'id' : string,
   'media' : [] | [ExternalBlob],
   'content' : string,
   'author' : Principal,
   'timestamp' : Time,
+  'isPinned' : boolean,
+}
+export interface Reaction {
+  'user' : Principal,
+  'reactionType' : string,
+  'timestamp' : Time,
 }
 export type Time = bigint;
+export interface UserDirectoryProfile {
+  'id' : string,
+  'bio' : string,
+  'displayName' : string,
+  'avatarBlob' : [] | [ExternalBlob],
+  'joinedDate' : Time,
+  'coverPhotoBlob' : [] | [ExternalBlob],
+}
 export interface UserProfile {
   'id' : string,
   'bio' : string,
   'displayName' : string,
   'avatarBlob' : [] | [ExternalBlob],
+  'joinedDate' : Time,
   'coverPhotoBlob' : [] | [ExternalBlob],
 }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface UserSettings {
+  'privacyPostsVisibleToFriendsOnly' : boolean,
+  'displayName' : string,
+}
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -58,20 +96,40 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'acceptFriendRequest' : ActorMethod<[Principal], undefined>,
+  'addComment' : ActorMethod<[string, string], Comment>,
+  'addReaction' : ActorMethod<[string, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'cancelFriendRequest' : ActorMethod<[Principal], undefined>,
   'createPost' : ActorMethod<[string, [] | [ExternalBlob]], Post>,
   'declineFriendRequest' : ActorMethod<[Principal], undefined>,
+  'deleteComment' : ActorMethod<[string, string], undefined>,
+  'deletePost' : ActorMethod<[string], undefined>,
+  'followUser' : ActorMethod<[Principal], undefined>,
+  'getCallerNotifications' : ActorMethod<[], Array<Notification>>,
+  'getCallerReactionForPost' : ActorMethod<[string], [] | [Reaction]>,
+  'getCallerSettings' : ActorMethod<[], [] | [UserSettings]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCommentsForPost' : ActorMethod<[string], Array<Comment>>,
+  'getFollowStats' : ActorMethod<[Principal], FollowStats>,
   'getFriends' : ActorMethod<[Principal], Array<Principal>>,
   'getPostsForUser' : ActorMethod<[Principal], Array<Post>>,
+  'getReactionsForPost' : ActorMethod<[string], Array<Reaction>>,
   'getTimeline' : ActorMethod<[], Array<Post>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'hasFriend' : ActorMethod<[Principal, Principal], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isFollowing' : ActorMethod<[Principal], boolean>,
+  'markAllNotificationsAsRead' : ActorMethod<[], undefined>,
+  'markNotificationAsRead' : ActorMethod<[string], undefined>,
+  'pinPost' : ActorMethod<[string], undefined>,
+  'removeReaction' : ActorMethod<[string], undefined>,
+  'saveCallerSettings' : ActorMethod<[UserSettings], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchUserProfiles' : ActorMethod<[string], Array<UserDirectoryProfile>>,
   'sendFriendRequest' : ActorMethod<[Principal], undefined>,
+  'unfollowUser' : ActorMethod<[Principal], undefined>,
+  'updatePost' : ActorMethod<[string, string, [] | [ExternalBlob]], Post>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

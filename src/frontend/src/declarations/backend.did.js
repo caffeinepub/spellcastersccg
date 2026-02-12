@@ -19,25 +19,69 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const Time = IDL.Int;
+export const Comment = IDL.Record({
+  'id' : IDL.Text,
+  'content' : IDL.Text,
+  'author' : IDL.Principal,
+  'timestamp' : Time,
+  'postAuthor' : IDL.Principal,
+  'postId' : IDL.Text,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
-export const Time = IDL.Int;
 export const Post = IDL.Record({
   'id' : IDL.Text,
   'media' : IDL.Opt(ExternalBlob),
   'content' : IDL.Text,
   'author' : IDL.Principal,
   'timestamp' : Time,
+  'isPinned' : IDL.Bool,
+});
+export const Notification = IDL.Record({
+  'id' : IDL.Text,
+  'notificationType' : IDL.Variant({
+    'comment' : IDL.Record({
+      'commentAuthor' : IDL.Principal,
+      'postId' : IDL.Text,
+    }),
+    'friendRequest' : IDL.Record({ 'from' : IDL.Principal }),
+  }),
+  'recipient' : IDL.Principal,
+  'isRead' : IDL.Bool,
+  'timestamp' : Time,
+});
+export const Reaction = IDL.Record({
+  'user' : IDL.Principal,
+  'reactionType' : IDL.Text,
+  'timestamp' : Time,
+});
+export const UserSettings = IDL.Record({
+  'privacyPostsVisibleToFriendsOnly' : IDL.Bool,
+  'displayName' : IDL.Text,
 });
 export const UserProfile = IDL.Record({
   'id' : IDL.Text,
   'bio' : IDL.Text,
   'displayName' : IDL.Text,
   'avatarBlob' : IDL.Opt(ExternalBlob),
+  'joinedDate' : Time,
+  'coverPhotoBlob' : IDL.Opt(ExternalBlob),
+});
+export const FollowStats = IDL.Record({
+  'followers' : IDL.Nat,
+  'following' : IDL.Nat,
+});
+export const UserDirectoryProfile = IDL.Record({
+  'id' : IDL.Text,
+  'bio' : IDL.Text,
+  'displayName' : IDL.Text,
+  'avatarBlob' : IDL.Opt(ExternalBlob),
+  'joinedDate' : Time,
   'coverPhotoBlob' : IDL.Opt(ExternalBlob),
 });
 
@@ -70,14 +114,29 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'acceptFriendRequest' : IDL.Func([IDL.Principal], [], []),
+  'addComment' : IDL.Func([IDL.Text, IDL.Text], [Comment], []),
+  'addReaction' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'cancelFriendRequest' : IDL.Func([IDL.Principal], [], []),
   'createPost' : IDL.Func([IDL.Text, IDL.Opt(ExternalBlob)], [Post], []),
   'declineFriendRequest' : IDL.Func([IDL.Principal], [], []),
+  'deleteComment' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'deletePost' : IDL.Func([IDL.Text], [], []),
+  'followUser' : IDL.Func([IDL.Principal], [], []),
+  'getCallerNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
+  'getCallerReactionForPost' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(Reaction)],
+      ['query'],
+    ),
+  'getCallerSettings' : IDL.Func([], [IDL.Opt(UserSettings)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCommentsForPost' : IDL.Func([IDL.Text], [IDL.Vec(Comment)], ['query']),
+  'getFollowStats' : IDL.Func([IDL.Principal], [FollowStats], ['query']),
   'getFriends' : IDL.Func([IDL.Principal], [IDL.Vec(IDL.Principal)], ['query']),
   'getPostsForUser' : IDL.Func([IDL.Principal], [IDL.Vec(Post)], ['query']),
+  'getReactionsForPost' : IDL.Func([IDL.Text], [IDL.Vec(Reaction)], ['query']),
   'getTimeline' : IDL.Func([], [IDL.Vec(Post)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -86,8 +145,25 @@ export const idlService = IDL.Service({
     ),
   'hasFriend' : IDL.Func([IDL.Principal, IDL.Principal], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isFollowing' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+  'markAllNotificationsAsRead' : IDL.Func([], [], []),
+  'markNotificationAsRead' : IDL.Func([IDL.Text], [], []),
+  'pinPost' : IDL.Func([IDL.Text], [], []),
+  'removeReaction' : IDL.Func([IDL.Text], [], []),
+  'saveCallerSettings' : IDL.Func([UserSettings], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchUserProfiles' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(UserDirectoryProfile)],
+      ['query'],
+    ),
   'sendFriendRequest' : IDL.Func([IDL.Principal], [], []),
+  'unfollowUser' : IDL.Func([IDL.Principal], [], []),
+  'updatePost' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(ExternalBlob)],
+      [Post],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -104,25 +180,69 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
+  const Time = IDL.Int;
+  const Comment = IDL.Record({
+    'id' : IDL.Text,
+    'content' : IDL.Text,
+    'author' : IDL.Principal,
+    'timestamp' : Time,
+    'postAuthor' : IDL.Principal,
+    'postId' : IDL.Text,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
-  const Time = IDL.Int;
   const Post = IDL.Record({
     'id' : IDL.Text,
     'media' : IDL.Opt(ExternalBlob),
     'content' : IDL.Text,
     'author' : IDL.Principal,
     'timestamp' : Time,
+    'isPinned' : IDL.Bool,
+  });
+  const Notification = IDL.Record({
+    'id' : IDL.Text,
+    'notificationType' : IDL.Variant({
+      'comment' : IDL.Record({
+        'commentAuthor' : IDL.Principal,
+        'postId' : IDL.Text,
+      }),
+      'friendRequest' : IDL.Record({ 'from' : IDL.Principal }),
+    }),
+    'recipient' : IDL.Principal,
+    'isRead' : IDL.Bool,
+    'timestamp' : Time,
+  });
+  const Reaction = IDL.Record({
+    'user' : IDL.Principal,
+    'reactionType' : IDL.Text,
+    'timestamp' : Time,
+  });
+  const UserSettings = IDL.Record({
+    'privacyPostsVisibleToFriendsOnly' : IDL.Bool,
+    'displayName' : IDL.Text,
   });
   const UserProfile = IDL.Record({
     'id' : IDL.Text,
     'bio' : IDL.Text,
     'displayName' : IDL.Text,
     'avatarBlob' : IDL.Opt(ExternalBlob),
+    'joinedDate' : Time,
+    'coverPhotoBlob' : IDL.Opt(ExternalBlob),
+  });
+  const FollowStats = IDL.Record({
+    'followers' : IDL.Nat,
+    'following' : IDL.Nat,
+  });
+  const UserDirectoryProfile = IDL.Record({
+    'id' : IDL.Text,
+    'bio' : IDL.Text,
+    'displayName' : IDL.Text,
+    'avatarBlob' : IDL.Opt(ExternalBlob),
+    'joinedDate' : Time,
     'coverPhotoBlob' : IDL.Opt(ExternalBlob),
   });
   
@@ -155,18 +275,37 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'acceptFriendRequest' : IDL.Func([IDL.Principal], [], []),
+    'addComment' : IDL.Func([IDL.Text, IDL.Text], [Comment], []),
+    'addReaction' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'cancelFriendRequest' : IDL.Func([IDL.Principal], [], []),
     'createPost' : IDL.Func([IDL.Text, IDL.Opt(ExternalBlob)], [Post], []),
     'declineFriendRequest' : IDL.Func([IDL.Principal], [], []),
+    'deleteComment' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'deletePost' : IDL.Func([IDL.Text], [], []),
+    'followUser' : IDL.Func([IDL.Principal], [], []),
+    'getCallerNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
+    'getCallerReactionForPost' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(Reaction)],
+        ['query'],
+      ),
+    'getCallerSettings' : IDL.Func([], [IDL.Opt(UserSettings)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCommentsForPost' : IDL.Func([IDL.Text], [IDL.Vec(Comment)], ['query']),
+    'getFollowStats' : IDL.Func([IDL.Principal], [FollowStats], ['query']),
     'getFriends' : IDL.Func(
         [IDL.Principal],
         [IDL.Vec(IDL.Principal)],
         ['query'],
       ),
     'getPostsForUser' : IDL.Func([IDL.Principal], [IDL.Vec(Post)], ['query']),
+    'getReactionsForPost' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(Reaction)],
+        ['query'],
+      ),
     'getTimeline' : IDL.Func([], [IDL.Vec(Post)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -179,8 +318,25 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isFollowing' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
+    'markAllNotificationsAsRead' : IDL.Func([], [], []),
+    'markNotificationAsRead' : IDL.Func([IDL.Text], [], []),
+    'pinPost' : IDL.Func([IDL.Text], [], []),
+    'removeReaction' : IDL.Func([IDL.Text], [], []),
+    'saveCallerSettings' : IDL.Func([UserSettings], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchUserProfiles' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(UserDirectoryProfile)],
+        ['query'],
+      ),
     'sendFriendRequest' : IDL.Func([IDL.Principal], [], []),
+    'unfollowUser' : IDL.Func([IDL.Principal], [], []),
+    'updatePost' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Opt(ExternalBlob)],
+        [Post],
+        [],
+      ),
   });
 };
 

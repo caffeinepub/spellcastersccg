@@ -32,6 +32,7 @@ export default function ProfileEditor({ onComplete }: ProfileEditorProps) {
         bio: bio.trim(),
         avatarBlob,
         coverPhotoBlob,
+        joinedDate: existingProfile?.joinedDate || BigInt(Date.now() * 1000000),
       },
       {
         onSuccess: () => {

@@ -1,15 +1,35 @@
 {
   "kind": "build_request",
-  "title": "Customizable user profile: avatar, cover photo, and bio",
+  "title": "Remove “Find People” from the app header navigation",
   "priority": "normal",
-  "requirements": [],
+  "requirements": [
+    {
+      "id": "REQ-30",
+      "text": "Remove the navigation item labeled \"Find People\" from the authenticated app header navigation (both the desktop header button group and the mobile slide-out menu), so it no longer appears in the tab/navigation bar UI.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "remove this section that says find people from the tab bar"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When signed in on desktop widths, the top header navigation no longer shows a button labeled \"Find People\".",
+        "When signed in on mobile widths, the slide-out menu no longer shows an item labeled \"Find People\".",
+        "No other navigation items (Feed, My Profile, Requests, Notifications, Settings) are removed or renamed.",
+        "All user-facing text remains in English."
+      ]
+    }
+  ],
   "constraints": [
-    "Do not modify read-only frontend paths listed in SYSTEM_CONTEXT.frontend.immutablePaths.",
-    "Keep all Motoko logic in the single backend actor at backend/main.mo; only add migration.mo if an upgrade requires state migration."
+    "Do not modify any files under frontend/src/components/ui (shadcn components are read-only).",
+    "Keep all user-facing text in English."
   ],
   "nonGoals": [
-    "Add new profile fields beyond profile picture, cover photo, and bio.",
-    "Introduce third-party authentication providers (only Internet Identity is supported)."
+    "Do not change the User Directory page layout, tabs, search behavior, or follow/unfollow functionality.",
+    "Do not remove or change the /directory route itself—only remove the \"Find People\" navigation entry from the header navigation UI."
   ],
   "imageRequirements": {
     "required": [],

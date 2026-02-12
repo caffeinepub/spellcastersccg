@@ -1,12 +1,14 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 25,
   "summary": "Java-based website for an online social media networking service.",
   "architectural_notes": [
-    "Branding/UI: top header text should be \"SpellCastersCCG\" styled in green."
+    "Branding/UI: top header text should be \"SpellCastersCCG\" styled in green.",
+    "User Directory UI should not have a separate \"Find People\" section; search bar should be displayed adjacent to the tab controls.",
+    "User Directory (/directory) UI: remove the \"Find People\" section/label from the tab bar area."
   ],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-internet-identity-sign-in-and-signed-in-session-handling-so-users-can-access-authenticated-features-profile-posts-friends",
@@ -79,6 +81,150 @@
         "REQ-9"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-post-composer-ui-so-users-publish-the-text-they-entered-by-clicking-a-clearly-labeled-primary-submit-button-that-reads-new-post",
+      "title": "Update the post composer UI so users publish the text they entered by clicking a clearly labeled primary submit button that reads \"New Post\".",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-post-composer-to-the-authenticated-user-feed-page-so-signed-in-users-can-publish-the-text-they-enter-as-a-new-post-directly-from-the-feed",
+      "title": "Add a post composer to the authenticated user feed page so signed-in users can publish the text they enter as a new post directly from the feed.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-post-comments-so-authenticated-users-can-add-comments-under-posts-and-view-existing-comments-for-each-post-in-the-feed-and-profile-post-lists",
+      "title": "Implement post comments so authenticated users can add comments under posts and view existing comments for each post in the feed and profile post lists.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-likes-reactions-on-posts-so-authenticated-users-can-react-to-a-post-and-see-the-total-reaction-count-and-their-own-reaction-state",
+      "title": "Implement likes/reactions on posts so authenticated users can react to a post and see the total reaction count and their own reaction state.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-allow-users-to-edit-or-delete-their-own-posts-with-authorization-enforced-by-the-backend",
+      "title": "Allow users to edit or delete their own posts, with authorization enforced by the backend.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-in-app-notifications-feature-that-records-and-displays-notifications-for-friend-requests-and-new-comments-with-read-unread-state",
+      "title": "Add an in-app notifications feature that records and displays notifications for friend requests and new comments, with read/unread state.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-basic-settings-page-where-authenticated-users-can-update-their-display-name-and-at-least-one-simple-privacy-option-and-persist-those-settings-via-the-backend",
+      "title": "Add a basic Settings page where authenticated users can update their display name and at least one simple privacy option, and persist those settings via the backend.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-authenticated-users-can-access-and-view-their-personal-profile-page-at-the-profile-route-showing-their-profile-header-avatar-cover-display-name-bio-and-their-own-posts-list-and-providing-an-edit-profile-action",
+      "title": "Ensure authenticated users can access and view their personal profile page at the \"/profile\" route, showing their profile header (avatar, cover, display name, bio) and their own posts list, and providing an \"Edit Profile\" action.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-my-profile-navigation-entry-discoverable-on-all-screen-sizes-for-authenticated-users-including-small-mobile-viewports-so-users-can-reliably-navigate-to-their-personal-profile-page-without-manually-typing-the-url",
+      "title": "Make the \"My Profile\" navigation entry discoverable on all screen sizes for authenticated users (including small/mobile viewports), so users can reliably navigate to their personal profile page without manually typing the URL.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-joined-date-to-user-profiles-and-render-it-on-both-the-authenticated-user-s-profile-page-and-other-users-profile-pages",
+      "title": "Add a joined date to user profiles and render it on both the authenticated user's profile page and other users' profile pages.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-allow-users-to-pin-exactly-one-of-their-posts-to-the-top-of-their-own-profile-and-display-a-pinned-post-section-at-the-top-of-profile-post-lists-when-a-pin-exists",
+      "title": "Allow users to pin exactly one of their posts to the top of their own profile, and display a pinned post section at the top of profile post lists when a pin exists.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-react-query-hooks-and-cache-invalidation-to-support-follow-counts-and-pin-unpin-actions-keeping-profile-pages-responsive-and-consistent-after-mutations",
+      "title": "Update React Query hooks and cache invalidation to support follow counts and pin/unpin actions, keeping profile pages responsive and consistent after mutations.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-stubbed-frontend-user-search-hook-with-a-real-react-query-hook-that-calls-the-new-backend-user-search-method-and-returns-matching-profiles-for-the-current-search-query",
+      "title": "Replace the stubbed frontend user search hook with a real React Query hook that calls the new backend user search method and returns matching profiles for the current search query.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-user-directory-page-to-use-backend-powered-searching-instead-of-client-side-filtering-over-an-empty-stubbed-list-and-show-appropriate-loading-and-empty-states",
+      "title": "Update the User Directory page to use backend-powered searching (instead of client-side filtering over an empty/stubbed list) and show appropriate loading and empty states.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-allow-authenticated-users-to-follow-unfollow-users-directly-from-the-user-search-results",
+      "title": "Allow authenticated users to follow/unfollow users directly from the user search results.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-user-directory-page-directory-ui-to-remove-the-standalone-find-people-section-header-and-instead-present-a-compact-top-row-where-the-search-input-is-displayed-inline-to-the-right-of-the-page-s-tab-controls",
+      "title": "Update the User Directory page (\"/directory\") UI to remove the standalone \"Find People\" section header and instead present a compact top row where the search input is displayed inline to the right of the page’s tab controls.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-updated-user-directory-layout-preserves-existing-loading-empty-and-results-states-and-that-all-user-facing-text-remains-in-english",
+      "title": "Ensure the updated User Directory layout preserves existing loading, empty, and results states, and that all user-facing text remains in English.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-navigation-item-labeled-find-people-from-the-authenticated-app-header-navigation-both-the-desktop-header-button-group-and-the-mobile-slide-out-menu-so-it-no-longer-appears-in-the-tab-navigation-bar-ui",
+      "title": "Remove the navigation item labeled \"Find People\" from the authenticated app header navigation (both the desktop header button group and the mobile slide-out menu), so it no longer appears in the tab/navigation bar UI.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -109,6 +255,114 @@
     {
       "id": "AR-5",
       "summary": "Update the top header to display green text reading \"SpellCastersCCG\"",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add a \"New Post\" button to publish a text post that the user has entered",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "In the home/user feed, allow users to publish the text they enter as a post",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Add comments under posts so users can interact",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add likes/reactions on posts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Allow users to edit or delete their own posts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add notifications (e.g., friend requests, comments)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add a basic settings page (e.g., update display name, privacy options)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add a simple profile settings screen",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Allow authenticated users to view their own personal profile page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Show follower and following counts on user profile pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Display a \"joined date\" on user profile pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Allow users to pin one of their posts at the top of their profile",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add backend support for follow relationships and expose follower/following counts for any user profile.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Allow users to search other users by display name and follow them from search/results",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Add backend support to search/browse user profiles by display name so the frontend user directory is not a stub and can return real results.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add backend query support for follow relationship state so the frontend can render correct Follow/Unfollow controls for a given target user.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Update User Directory UI: remove the \"Find People\" section and place the search bar inline next to the tab sections",
       "reqIds": [],
       "status": "pending"
     }

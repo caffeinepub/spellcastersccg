@@ -1,23 +1,27 @@
 import { useState } from 'react';
 import { useGetCallerUserProfile } from '../hooks/useProfiles';
+import { useGetFollowStats } from '../hooks/useFollowStats';
 import ProfileEditor from '../components/ProfileEditor';
 import PostComposer from '../components/PostComposer';
 import PostList from '../components/PostList';
 import { useGetPostsForUser } from '../hooks/usePosts';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import ProfileImages from '../components/ProfileImages';
+import { formatJoinedDate } from '../utils/formatDate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Loader2, Edit } from 'lucide-react';
+import { Loader2, Edit, Users, UserPlus, Calendar } from 'lucide-react';
 
 export default function MyProfilePage() {
   const { identity } = useInternetIdentity();
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
   const { data: posts, isLoading: postsLoading } = useGetPostsForUser(identity?.getPrincipal());
+  const { data: followStats, isLoading: statsLoading } = useGetFollowStats(identity?.getPrincipal());
   const [showEditor, setShowEditor] = useState(false);
 
-  const showProfileSetup = !!identity && !profileLoading && isFetched && userProfile === null;
+  const isAuthenticated = !!identity;
+  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
 
   if (profileLoading) {
     return (
@@ -35,6 +39,9 @@ export default function MyProfilePage() {
             <CardTitle>Complete Your Profile</CardTitle>
           </CardHeader>
           <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Welcome! Please set up your profile to get started.
+            </p>
             <ProfileEditor onComplete={() => setShowEditor(false)} />
           </CardContent>
         </Card>
@@ -43,7 +50,11 @@ export default function MyProfilePage() {
   }
 
   if (!userProfile) {
-    return null;
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   return (
@@ -57,9 +68,30 @@ export default function MyProfilePage() {
         />
         <CardContent className="pt-20">
           <div className="flex justify-between items-start">
-            <div>
+            <div className="flex-1">
               <h1 className="text-3xl font-bold">{userProfile.displayName}</h1>
-              <p className="text-muted-foreground mt-2">{userProfile.bio}</p>
+              {userProfile.bio && (
+                <p className="text-muted-foreground mt-2">{userProfile.bio}</p>
+              )}
+              
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" />
+                  <span>Joined {formatJoinedDate(userProfile.joinedDate)}</span>
+                </div>
+                {!statsLoading && followStats && (
+                  <>
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-4 w-4" />
+                      <span><strong className="text-foreground">{followStats.followers.toString()}</strong> Followers</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <UserPlus className="h-4 w-4" />
+                      <span><strong className="text-foreground">{followStats.following.toString()}</strong> Following</span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
             <Dialog open={showEditor} onOpenChange={setShowEditor}>
               <DialogTrigger asChild>
@@ -98,7 +130,12 @@ export default function MyProfilePage() {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           )}
-          {!postsLoading && posts && <PostList posts={posts} />}
+          {!postsLoading && posts && posts.length > 0 && <PostList posts={posts} profileMode={true} />}
+          {!postsLoading && posts && posts.length === 0 && (
+            <p className="text-center text-muted-foreground py-8">
+              You haven't created any posts yet.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -1,10 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Add a customizable user profile with avatar, cover photo, and bio.
+**Goal:** Remove the “Find People” item from the authenticated app header navigation UI on both desktop and mobile.
 
 **Planned changes:**
-- Add profile data support for avatar, cover photo, and bio.
-- Add UI to let users view and update their avatar, cover photo, and bio.
+- Remove the “Find People” entry from the signed-in desktop header button group.
+- Remove the “Find People” entry from the signed-in mobile slide-out navigation menu.
+- Keep all other navigation items (Feed, My Profile, Requests, Notifications, Settings) unchanged and in English.
 
-**User-visible outcome:** Users can view and edit their profile avatar, cover photo, and bio.
+**User-visible outcome:** Signed-in users will no longer see “Find People” in the app’s header navigation on desktop or in the mobile slide-out menu, while all other navigation items remain available.
